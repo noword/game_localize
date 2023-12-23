@@ -6,7 +6,7 @@
 
 ## [银星围棋（平台：PSV）](Ginsei%20Igo%20Next%20Generation)
 
-[1. 解包](notes/Ginsei%20Igo%20Next%20Generation/chapter_1.md)
+[1. 解包打包](notes/Ginsei%20Igo%20Next%20Generation/chapter_1.md)
 
 [2. 处理图片](notes/Ginsei%20Igo%20Next%20Generation/chapter_2.md)
 
