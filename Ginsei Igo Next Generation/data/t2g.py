@@ -1,6 +1,7 @@
 import sys
 from struct import unpack, pack
 from collections import OrderedDict
+import unittest
 
 sys.path.append('../../libs')
 from base import *
