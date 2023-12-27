@@ -8,7 +8,7 @@
 
 [1. 解包打包](notes/Ginsei%20Igo%20Next%20Generation/chapter_1.md)
 
-[2. 处理图片](notes/Ginsei%20Igo%20Next%20Generation/chapter_2.md)
+[2. 处理图像](notes/Ginsei%20Igo%20Next%20Generation/chapter_2.md)
 
 [3. 处理文本](notes/Ginsei%20Igo%20Next%20Generation/chapter_3.md)
 
