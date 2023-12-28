@@ -29,11 +29,11 @@
 
 整个流程是这样的：
 ```mermaid
-graph TD;
-利用OCR从原来的图像中识别出文字，生成excel-->翻译excel;
-翻译excel-->用excel中的翻译文本生成 tga g格式的图像;
-去除文字，得到纯净背景的图像-->用excel中的翻译文本生成 tga g格式的图像;
-用excel中的翻译文本生成 TGA 图像-->tga 转 gxt;
+flowchart TD;
+  利用OCR从原来的图像中识别出文字，生成excel-->翻译excel;
+  翻译excel-->用excel中的翻译文本生成 tga g格式的图像;
+  去除文字，得到纯净背景的图像-->用excel中的翻译文本生成 tga g格式的图像;
+  用excel中的翻译文本生成 TGA 图像-->tga 转 gxt;
 
 
 ```
