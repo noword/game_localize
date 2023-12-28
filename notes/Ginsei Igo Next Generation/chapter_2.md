@@ -28,7 +28,7 @@ for /r %i in ([gxt所在目录]\*.gxt) do GXTConvert "%i"
 
 # 完
 
-</br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
+</br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br></br>
 
 可能你没有美工，就算有美工，我们也有更好的处理方式。
 
@@ -89,6 +89,55 @@ trans.save('Ginsei Igo Next Generation Images.xlsx', index='Japanese')
 处理好的图片，放在目录 [image\bg](../../Ginsei%20Igo%20Next%20Generation/image/bg/) 下面。
 
 ***
+**第四步**，用程序来生成图片。由程序 [gen_pic.py](../../Ginsei%20Igo%20Next%20Generation/image/gen_pic.py) 实现。
 
+程序会从 xlsx 中依次读取文本、图片文件名和函数名，然后以文本和文件名作为参数，执行函数。
+
+例如，遇到：
+![](images/003.JPG)
+
+则最终会执行：
+```python
+MyDrawer.do_B1_gbtn('继续', 'B1_gbtnContinue.tga')
+```
+
+MyDrawer.do_B1_gbtn 是这样的：
+```python
+class MyDrawer(Drawer):
+    def do_B1_gbtn(self, text, name):
+        image = self.get_image('B1.png')
+        size = 192, 40
+        font = self.get_font('SourceHanSansCN-Bold.otf', 25)
+        im = self.get_text_image(size, font, text, color='#333333', stroke_width=1, blur=2)
+        image.paste(im, mask=im)
+        im = self.get_text_image(size, font, text)
+        image.paste(im, mask=im)
+        image.save(name)
+```
+
+首先是用 `get_image` 得到背景图，这个函数在父类 `Drawer` 中实现，有 cache 机制。
+
+`size` 的 192, 40 是按钮的大小。
+
+`get_font` 用于得到字体，和 `get_image` 一样，也是在父类 `Drawer` 中实现，也有 cache 机制。
+
+`get_text_image` 用于得到文字图片，在父类 `Drawer` 中实现。
+```python
+    def get_text_image(
+        self,
+        size,              # 图片大小
+        font,              # ImageFont 字体
+        text,              # 文本
+        halign='center',   # 横向对齐方式，合法值： left, right, center
+        valign='center',   # 纵向对齐方式，合法值：top, bottom, center
+        italic=False,      # 倾斜
+        color='white',     # 文字颜色
+        letter_space=1.0,  # 字符间距的比例，合法值 0 - 1
+        blur=-1,           # 高斯模糊滤镜的参数，小于 0 无效，数值越大越模糊，建议从 2 开始调整
+        stroke_width=0,    # 字体描边宽度
+        stroke_fill=None,  # 描边颜色
+        shear=None,        # 仿射变换参数，控制倾斜率，如设置了italic=True，则固定为0.2
+    ):
+```
 
 施工中...
