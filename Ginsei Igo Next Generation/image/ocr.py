@@ -1,7 +1,7 @@
 import sys
 
 sys.path.append('../../libs')
-from trans import Translation
+from translation import Translation
 import easyocr
 from pathlib import Path
 
