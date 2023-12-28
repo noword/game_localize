@@ -53,11 +53,11 @@ flowchart TD;
 如此做的好处是，只要写好程序，对于同样样式的图片，提供对应的文本后，就可以零成本的批量生成；而且之后可以随意修改翻译的文本。如果对出图的颜色等效果不满意，也可以非常方便的修改。
 
 ***
-**第一步**，OCR图片并生成 excel 由程序 [ocr.py](../../Ginsei%20Igo%20Next%20Generation/image/ocr.py) 实现。
+**第一步**，OCR识别文字并生成 excel。 由程序 [ocr.py](../../Ginsei%20Igo%20Next%20Generation/image/ocr.py) 实现。
 
 关于 OCR 可以使用开源的 [easyocr](https://github.com/JaidedAI/EasyOCR)，即便有识别错误的情况也没关系，这些原始文本之后是没用的，明显错误的可以直接看着图片来翻译。
 
-关于生成 excel 文件，我用了 (openpyxl)[https://pypi.org/project/openpyxl/]，并在此基础上写了一个 [translate.py](../../libs/translation.py)。
+关于生成 excel 文件，我用了 [openpyxl](https://pypi.org/project/openpyxl/)，并在此基础上写了一个 [translate.py](../../libs/translation.py)。
 
 ```python
 from translation import Translation
@@ -67,7 +67,7 @@ trans = Translation()
 trans.append(
     {
         'ImageName': 'xxx.tga'    # 图像文件名
-        'Japanese': 'こんにちは', # 日语原文
+        'Japanese': 'こんにちは',  # 日语原文
         'Chinese': '',            # 用于
         'Function': '',           # 用于生成图片的函数名
     }
