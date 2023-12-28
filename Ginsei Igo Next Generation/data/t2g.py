@@ -8,7 +8,12 @@ from base import *
 
 
 class T2gFile(NamedStruct):
-    FORMATS = (('I', 'index'), ('52s', 'name_bytes'), ('I', 'size'), ('I', 'aligned_size'))
+    FORMATS = (
+        ('I', 'index'),
+        ('52s', 'name_bytes'),
+        ('I', 'size'),
+        ('I', 'aligned_size'),
+    )
 
     def load(self, io):
         super().load(io)
@@ -77,21 +82,6 @@ class T2GF(NamedStructWithMagic, OrderedDict):
         return '\n'.join(s)
 
 
-def test():
-    from pathlib import Path
-    from io import BytesIO
-
-    for name in Path('backup').glob('*.t2g'):
-        print(f'test {name}')
-        t2g = T2GF(open(name, 'rb'))
-        old_bytes = open(name, 'rb').read()
-        new_bytes = t2g.getvalue()
-        if old_bytes != new_bytes:
-            open(f'{name}.new', 'wb').write(new_bytes)
-            print(f'test failed on {name}')
-            raise TypeError
-
-
 if __name__ == '__main__':
     import argparse
 
@@ -99,16 +89,12 @@ if __name__ == '__main__':
     parser.add_argument('name', action='store', nargs='?')
     parser.add_argument('dump_name', action='store', nargs='?')
     parser.add_argument("--dump_all", action="store_true", default=False)
-    parser.add_argument("--test", action="store_true", default=False)
     args = parser.parse_args()
 
-    if args.test:
-        test()
+    t2g = T2GF(open(args.name, 'rb'))
+    if args.dump_all:
+        t2g.dump_all()
+    elif args.dump_name:
+        t2g.dump(args.dump_name)
     else:
-        t2g = T2GF(open(args.name, 'rb'))
-        if args.dump_all:
-            t2g.dump_all()
-        elif args.dump_name:
-            t2g.dump(args.dump_name)
-        else:
-            print(t2g)
+        print(t2g)

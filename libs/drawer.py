@@ -115,7 +115,7 @@ class Drawer:
         italic=False,  # 倾斜
         color='white',  # 文字颜色
         letter_space=1.0,  # 字符间距的比例，合法值 0 - 1
-        filter=None,  # ImageFilter 滤镜
+        blur=-1,  # 高斯模糊滤镜的参数，小于 0 无效，数值越大越模糊，建议从 2 开始调整
         stroke_width=0,  # 字体描边宽度
         stroke_fill=None,  # 描边颜色
         shear=None,  # 仿射变换参数，控制倾斜率，如设置了italic=True，则固定为0.2
@@ -153,8 +153,8 @@ class Drawer:
                 )
                 x += w * letter_space
 
-        if filter:
-            im = im.filter(filter)
+        if blur > 0:
+            im = im.filter(ImageFilter.GaussianBlur(blur))
 
         if italic:
             shear = 0.2

@@ -14,6 +14,8 @@
   其实，还有个更简单的方法。使用 PSV 模拟器 [Vita3K](https://github.com/Vita3K/Vita3K) 安装 pkg 文件，安装完后，选择菜单 `File` ==> `Open Pref Path`，在`ux0\app `中会出现一个该游戏“Title ID”的目录，里面的文件都是已经解密好的。
   
   这里面的文件修改后，对于安装有 rePatch 插件的实体机，可以直接放在的 `ux0:/rePatch/[Title ID]` 目录下（保持相同路径），即可生效。
+
+  作为一个初设 PSV 游戏汉化的萌新，我还不知道如何把整个游戏重新打包成 pkg、vpk、mia 格式。希望能有大佬不吝赐教。
   
   *注: 关于zRIF，可以在 tsv 文件中找，也可以在[网站](https://nopaystation.com/browse)上直接搜索得到。*
 
@@ -48,7 +50,24 @@
 
 这两个类分别继承自 `NamedStruct` 和 `NamedStructWithMagic`。其中 `NamedStruct` 的主要目的是 ~~尽可能的少写代码。~~ 在 load 和 save 中，按照定义好的格式 `NamedStruct.FORMATS` 进行读写。`NamedStructWithMagic` 外加可以检查文件头。
 
-把类完成后，最好再写个 `test`，确保 `load` 后什么都不改，再 `save` 回去，能够和原来的一模一样。
+***
+* NamedStruct.FORMATS 的写法：
+```python
+  FORMATS = (
+      ('I', 'index'),        # 32 位无符号整数
+      ('52s', 'name_bytes'), # 长度为 52 字节的 bytes
+      ('I', 'size'),         # 32 位无符号整数
+      ('I', 'aligned_size'), # 32 位无符号整数
+  )
+```
+  第一项是 python 的 struct [格式字符](https://docs.python.org/zh-cn/3/library/struct.html#format-characters)，不能添加[大小端的符号](https://docs.python.org/zh-cn/3/library/struct.html#byte-order-size-and-alignment)，默认是小端对齐；第二项是变量名，经过 load 后，就可以直接在类中使用了。
+
+***
+* NamedStructWithMagic.MAGIC 用于检查文件头。注意 MAGIC 变量的类型是 bytes 不是 string。也可以不重新定义，会直接用类名代替。
+
+***
+
+把类完成后，最好再写个 [测试脚本](../../Ginsei%20Igo%20Next%20Generation/data/test.py)，以确保 `load` 后什么都不改，再 `save` 回去，能够和原来的一模一样。
 
 把所有的 t2g 文件复制到 data/backup 下面，执行
 
@@ -56,6 +75,6 @@
 for /r %i in (backup\*.t2g) do t2g.py "%i" --dump_all
 ```
 
-即可导出所有的文件。由于这个游戏的资源包内没有重名的子文件，所以不用做诸如改名或分别导出到不同的目录里等等的特别处理。
+即可导出所有的文件。由于这个游戏的资源包内没有重名的子文件，所以不用做诸如改名或分别导出到不同的目录里等等的特别处理。当然，讲究点也可以写个即写即用即抛的 [extract.py](../../Ginsei%20Igo%20Next%20Generation/data/extract.py) 脚本。 
 
 把文件导入回去的功能在 [gen.py](../../Ginsei%20Igo%20Next%20Generation/data/gen.py) 中实现。该程序会遍历 backup 中的所有 .t2g 文件，判断在当前目录中是否含有 t2g 的子文件，有的话则进行替换，并把新的 t2g 保存在当前目录。
