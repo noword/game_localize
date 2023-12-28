@@ -63,6 +63,7 @@ flowchart TD;
 from translation import Translation
 # 定义一个 Translation 类实例
 trans = Translation()
+
 # 添加文本
 trans.append(
     {
@@ -72,6 +73,7 @@ trans.append(
         'Function': '',           # 用于生成图片的函数名
     }
 )
+
 # 保存
 trans.save('Ginsei Igo Next Generation Images.xlsx', index='Japanese')
 ```
