@@ -159,7 +159,7 @@ class MyDrawer(Drawer):
 
 ![](images/008.png)
 
-文字中的渐变色效果设这样实现的：
+文字中的渐变色效果是这样实现的：
 
 ```python
     def do_GK_0texS_01(self, text, name):
