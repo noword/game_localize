@@ -114,6 +114,7 @@ class MyDrawer(Drawer):
         image.paste(im, mask=im)
         image.save(name)
 ```
+让我们逐句解析这段程序。
 
 首先是用 `get_image` 得到背景图，这个函数在父类 `Drawer` 中实现，有 cache 机制。如果参数传入的是字符串文件名，则返回该图片；如果传入的是宽和高，则返回一张该大小的空图片。
 
