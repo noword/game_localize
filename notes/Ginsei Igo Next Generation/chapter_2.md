@@ -130,7 +130,7 @@ class MyDrawer(Drawer):
         size,              # 图片大小
         font,              # ImageFont 字体
         text,              # 文本
-        halign='center',   # 横向对齐方式，合法值： left, right, center
+        halign='center',   # 横向对齐方式，合法值：left, right, center
         valign='center',   # 纵向对齐方式，合法值：top, bottom, center
         italic=False,      # 倾斜
         color='white',     # 文字颜色
@@ -138,7 +138,7 @@ class MyDrawer(Drawer):
         blur=-1,           # 高斯模糊滤镜的参数，小于 0 无效，数值越大越模糊，建议从 2 开始调整
         stroke_width=0,    # 字体描边宽度
         stroke_fill=None,  # 描边颜色
-        shear=None,        # 仿射变换参数，控制倾斜率，如设置了italic=True，则固定为0.2
+        shear=None,        # 仿射变换参数，控制倾斜率，如设置了 italic=True，则固定为 0.2
     ):
 ```
 `self.get_text_image(size, font, text, color='#333333', stroke_width=1, blur=2)` 得到的是一张把文字扩大一圈后进行模糊处理的图片，作为文字的外围轮廓：
