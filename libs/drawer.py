@@ -114,7 +114,7 @@ class Drawer:
         valign='center',  # 纵向对齐方式，合法值：top, bottom, center
         italic=False,  # 倾斜
         color='white',  # 文字颜色
-        letter_space=1.0,  # 字符间距的比例，合法值 0 - 1
+        letter_space=1.0,  # 字符间距的比例
         blur=-1,  # 高斯模糊滤镜的参数，小于 0 无效，数值越大越模糊，建议从 2 开始调整
         stroke_width=0,  # 字体描边宽度
         stroke_fill=None,  # 描边颜色

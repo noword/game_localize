@@ -50,7 +50,7 @@ flowchart TD;
   D-->E;
 ```
 
-如此做的好处是，只要写好程序，对于同样样式的图片，提供对应的文本后，就可以零成本的批量生成；而且之后可以随意修改翻译的文本。如果对出图的颜色等效果不满意，也可以非常方便的修改。
+如此做的**好处**是，只要写好程序，对于同样样式的图片，提供对应的文本后，就可以**零成本的批量生成**；而且之后可以**随意修改翻译的文本**。如果对出图的颜色等效果不满意，也可以非常方便的**修改添加各种效果**。
 
 ***
 **第一步**，OCR识别文字并生成 excel。 由程序 [ocr.py](../../Ginsei%20Igo%20Next%20Generation/image/ocr.py) 实现。
@@ -115,13 +115,14 @@ class MyDrawer(Drawer):
         image.save(name)
 ```
 
-首先是用 `get_image` 得到背景图，这个函数在父类 `Drawer` 中实现，有 cache 机制。
+首先是用 `get_image` 得到背景图，这个函数在父类 `Drawer` 中实现，有 cache 机制。如果参数传入的字符串文件名，则返回该图片；如果传入的是宽和高，则返回一张该大小的空图片。
 
 `size` 的 192, 40 是按钮的大小。
+![](images/004.JPG)
 
 `get_font` 用于得到字体，和 `get_image` 一样，也是在父类 `Drawer` 中实现，也有 cache 机制。
 
-`get_text_image` 用于得到文字图片，在父类 `Drawer` 中实现。
+`get_text_image` 用于得到一张文字图片，在父类 `Drawer` 中实现。
 ```python
     def get_text_image(
         self,
@@ -132,12 +133,56 @@ class MyDrawer(Drawer):
         valign='center',   # 纵向对齐方式，合法值：top, bottom, center
         italic=False,      # 倾斜
         color='white',     # 文字颜色
-        letter_space=1.0,  # 字符间距的比例，合法值 0 - 1
+        letter_space=1.0,  # 字符间距的比例
         blur=-1,           # 高斯模糊滤镜的参数，小于 0 无效，数值越大越模糊，建议从 2 开始调整
         stroke_width=0,    # 字体描边宽度
         stroke_fill=None,  # 描边颜色
         shear=None,        # 仿射变换参数，控制倾斜率，如设置了italic=True，则固定为0.2
     ):
 ```
+`self.get_text_image(size, font, text, color='#333333', stroke_width=1, blur=2)` 得到的是一张把文字扩大一圈后进行模糊处理的图片，作为文字的外围轮廓：
 
-施工中...
+![](images/005.png)
+
+`self.get_text_image(size, font, text)` 得到是这样一张图片：
+
+![](images/006.png)
+
+把这两张图依次粘贴到背景图上，最终保存得到：
+
+![](images/007.png)
+
+总体思路就是把文字图片不断的往背景上贴。
+
+其中，最复杂的是这张：
+![](images/008.png)
+
+文字中的渐变色效果设这样实现的：
+
+```python
+    def do_GK_0texS_01(self, text, name):
+        ... # 略
+        alpha = self.get_text_image(size, font, text, italic=True, letter_space=letter_space, blur=0.5).convert('L')
+        im = self.get_degrees_gradient_image(size, ('white', '#999999'), 90)
+        im.putalpha(alpha)
+        image.paste(im, mask=im)
+
+        image.save(name)
+```
+
+先把文字图片转成灰度图像，作为alpha通道；然后利用`get_degrees_gradient_image`生成一张渐变色的图；最后在这张渐变色图上，设置 alpha 通道。
+```python
+    def get_degrees_gradient_image(
+        self,
+        size,  # 图片大小
+        color_palette,  # 颜色枚举
+        degrees=0,  # 渐变角度
+    ):
+```
+其中的 `color_palette` 参数，可以使用 2 种以上的颜色。
+
+***
+
+生成完图片后，用 `check_size` 检查一下是否和原始的图片大小相同；然后用 `gen_gxt` 生成最终的 .gxt 文件。
+
+至此，图像处理完毕。
