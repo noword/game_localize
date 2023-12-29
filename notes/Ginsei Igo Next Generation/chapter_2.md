@@ -115,9 +115,9 @@ class MyDrawer(Drawer):
         image.save(name)
 ```
 
-首先是用 `get_image` 得到背景图，这个函数在父类 `Drawer` 中实现，有 cache 机制。如果参数传入的字符串文件名，则返回该图片；如果传入的是宽和高，则返回一张该大小的空图片。
+首先是用 `get_image` 得到背景图，这个函数在父类 `Drawer` 中实现，有 cache 机制。如果参数传入的是字符串文件名，则返回该图片；如果传入的是宽和高，则返回一张该大小的空图片。
 
-`size` 的 192, 40 是按钮的大小。
+`size` 是按钮的大小。
 ![](images/004.JPG)
 
 `get_font` 用于得到字体，和 `get_image` 一样，也是在父类 `Drawer` 中实现，也有 cache 机制。
@@ -155,6 +155,7 @@ class MyDrawer(Drawer):
 总体思路就是把文字图片不断的往背景上贴。
 
 其中，最复杂的是这张：
+
 ![](images/008.png)
 
 文字中的渐变色效果设这样实现的：
