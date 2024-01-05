@@ -15,7 +15,7 @@
   
   这里面的文件修改后，对于安装有 rePatch 插件的实体机，可以直接放在的 `ux0:/rePatch/[Title ID]` 目录下（保持相同路径），即可生效。
 
-  作为一个初涉 PSV 游戏汉化的萌新，我还不知道如何把整个游戏重新打包成 pkg、vpk、mia 格式。希望能有大佬不吝赐教。
+  作为一个初涉 PSV 游戏汉化的萌新，我还不知道如何把整个游戏重新打包成 pkg、vpk、mia 格式。希望能有大佬不吝赐教。(更新：可以用 [VitaSdk](https://vitasdk.org/) 中的工具 vita-pack-vpk 来打包成 vpk)
   
   *注: 关于zRIF，可以在 tsv 文件中找，也可以在[网站](https://nopaystation.com/browse)上直接搜索得到。*
 
