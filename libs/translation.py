@@ -7,6 +7,20 @@ from dataclasses import dataclass
 from collections import OrderedDict
 import json
 
+# https://stackoverflow.com/questions/30011379/how-can-i-parse-a-c-format-string-in-python
+C_FORMAT = r'''
+(                                  # start of capture group 1
+%                                  # literal "%"
+(?:                                # first option
+(?:[-+0 #]{0,5})                   # optional flags
+(?:\d+|\*)?                        # width
+(?:\.(?:\d+|\*))?                  # precision
+(?:h|l|ll|w|I|I32|I64)?            # size
+[cCdiouxXeEfgGaAnpsSZ]             # type
+) |                                # OR
+%%)                                # literal "%%"
+'''
+
 
 @dataclass
 class Theme:
@@ -33,66 +47,72 @@ class Theme:
     other_color: str
 
     def __post_init__(self):
-        self.header_fill = openpyxl.styles.GradientFill(stop=(self.header_background_color_start,
-                                                              self.header_background_color_end))
+        self.header_fill = openpyxl.styles.GradientFill(
+            stop=(self.header_background_color_start, self.header_background_color_end)
+        )
         self.header_font = openpyxl.styles.Font(name=self.font_name, bold=True, color=self.header_color)
 
-        self.org_fill = openpyxl.styles.GradientFill(stop=(self.original_background_color_start,
-                                                           self.original_background_color_end))
+        self.org_fill = openpyxl.styles.GradientFill(
+            stop=(self.original_background_color_start, self.original_background_color_end)
+        )
         self.org_font = openpyxl.styles.Font(name=self.font_name, color=self.original_color)
 
-        self.trans_fill = openpyxl.styles.GradientFill(stop=(self.translation_background_color_start,
-                                                             self.translation_background_color_end))
+        self.trans_fill = openpyxl.styles.GradientFill(
+            stop=(self.translation_background_color_start, self.translation_background_color_end)
+        )
         self.trans_font = openpyxl.styles.Font(name=self.font_name, color=self.translation_color)
 
-        self.comment_fill = openpyxl.styles.GradientFill(stop=(self.comment_background_color_start,
-                                                               self.comment_background_color_end))
+        self.comment_fill = openpyxl.styles.GradientFill(
+            stop=(self.comment_background_color_start, self.comment_background_color_end)
+        )
         self.comment_font = openpyxl.styles.Font(name=self.font_name, color=self.comment_color)
 
-        self.other_fill = openpyxl.styles.GradientFill(stop=(self.other_background_color_start,
-                                                             self.other_background_color_end))
+        self.other_fill = openpyxl.styles.GradientFill(
+            stop=(self.other_background_color_start, self.other_background_color_end)
+        )
         self.other_font = openpyxl.styles.Font(name=self.font_name, color=self.other_color)
 
         self.font = openpyxl.styles.Font(name=self.font_name)
-        self.border = Border(left=Side(style='hair'),
-                             right=Side(style='hair'),
-                             top=Side(style='hair'),
-                             bottom=Side(style='hair'),
-                             )
+        self.border = Border(
+            left=Side(style='hair'),
+            right=Side(style='hair'),
+            top=Side(style='hair'),
+            bottom=Side(style='hair'),
+        )
 
 
-THEME = Theme(font_name='Consolas',
-              header_background_color_start='FCF3CF',
-              header_background_color_end='FEF9E7',
-              header_color='333300',
-              original_background_color_start='D6EAF8',
-              original_background_color_end='EAFAF1',
-              original_color='000033',
-              translation_background_color_start='D5F5E3',
-              translation_background_color_end='EAFAF1',
-              translation_color='003300',
-              comment_background_color_start='FADBD8',
-              comment_background_color_end='FDEDEC',
-              comment_color='330000',
-              other_background_color_start='FFFFFF',
-              other_background_color_end='F8F8F8',
-              other_color='330000'
-              )
+THEME = Theme(
+    font_name='Consolas',
+    header_background_color_start='FCF3CF',
+    header_background_color_end='FEF9E7',
+    header_color='333300',
+    original_background_color_start='D6EAF8',
+    original_background_color_end='EAFAF1',
+    original_color='000033',
+    translation_background_color_start='D5F5E3',
+    translation_background_color_end='EAFAF1',
+    translation_color='003300',
+    comment_background_color_start='FADBD8',
+    comment_background_color_end='FDEDEC',
+    comment_color='330000',
+    other_background_color_start='FFFFFF',
+    other_background_color_end='F8F8F8',
+    other_color='330000',
+)
 
 
 class Translation(list):
-    def __init__(self,
-                 name: str = None,
-                 theme: Theme = THEME):
+    def __init__(self, name: str = None, theme: Theme = THEME):
         self.theme = theme
         if name is not None:
             self.load(name)
 
     def load(self, name: str):
-        LOAD = {'.xlsx': self.__load_xlsx,
-                # '.csv': self.__load_csv,
-                '.json': self.__load_json
-                }
+        LOAD = {
+            '.xlsx': self.__load_xlsx,
+            # '.csv': self.__load_csv,
+            '.json': self.__load_json,
+        }
         suffix = Path(name).suffix
         if suffix in LOAD:
             LOAD[suffix](name)
@@ -100,10 +120,11 @@ class Translation(list):
             raise TypeError(f'unsupported file type: {suffix}')
 
     def save(self, name: str, index: str):
-        SAVE = {'.xlsx': self.__save_xlsx,
-                # '.csv': self.__save_csv,
-                '.json': self.__save_json
-                }
+        SAVE = {
+            '.xlsx': self.__save_xlsx,
+            # '.csv': self.__save_csv,
+            '.json': self.__save_json,
+        }
 
         self.__before_save()
         suffix = Path(name).suffix
@@ -161,16 +182,20 @@ class Translation(list):
         json.dump(self, open(name, 'w'), encoding='utf-8', ensure_ascii=False, indent=4)
 
     def __set_excel_styles(self, ws: worksheet, frezze_index: int):
-        trans_rule = openpyxl.formatting.rule.CellIsRule(operator='notEqual',
-                                                         formula=['""'],
-                                                         border=self.theme.border,
-                                                         fill=self.theme.trans_fill,
-                                                         font=self.theme.trans_font)
-        comment_rule = openpyxl.formatting.rule.CellIsRule(operator='notEqual',
-                                                           formula=['""'],
-                                                           border=self.theme.border,
-                                                           fill=self.theme.comment_fill,
-                                                           font=self.theme.comment_font)
+        trans_rule = openpyxl.formatting.rule.CellIsRule(
+            operator='notEqual',
+            formula=['""'],
+            border=self.theme.border,
+            fill=self.theme.trans_fill,
+            font=self.theme.trans_font,
+        )
+        comment_rule = openpyxl.formatting.rule.CellIsRule(
+            operator='notEqual',
+            formula=['""'],
+            border=self.theme.border,
+            fill=self.theme.comment_fill,
+            font=self.theme.comment_font,
+        )
 
         for i, row in enumerate(ws.iter_rows()):
             for cell in row:
@@ -230,8 +255,10 @@ class Translation(list):
     def check_vars(self, regex: str, org: str, trans: str, ordered: bool = True):
         resuls = []
         for i, d in enumerate(self, start=1):
-            org_vars = re.findall(regex, d[org])
-            trans_vars = re.findall(regex, d[trans])
+            if len(d[trans]) == 0:
+                continue
+            org_vars = re.findall(regex, d[org], re.VERBOSE)
+            trans_vars = re.findall(regex, d[trans], re.VERBOSE)
             if len(org_vars) != len(trans_vars):
                 resuls.append([i, org_vars, trans_vars])
             else:
@@ -247,5 +274,5 @@ class Translation(list):
 
 if __name__ == '__main__':
     trans = Translation()
-    trans.append({'en': 'hello world', 'cn': '测试 xxx123xxx'})
-    trans.save('example.xlsx', index='en')
+    trans.append({'en': 'xxx', 'cn': 123})
+    trans.save('1.xlsx', index='en')
